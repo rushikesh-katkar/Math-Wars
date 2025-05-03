@@ -27,9 +27,11 @@
     document.getElementById('profile-form').addEventListener('submit', async function (e) {
       e.preventDefault();
   
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const school = document.getElementById('school').value.trim();
+      const fname = document.getElementById('First Name').value.trim();
+      const lname = document.getElementById('Last Name').value.trim();
+      const dob = document.getElementById('Date of Birth').value.trim();
+      const email = document.getElementById('Email id').value.trim();
+      const mbn = document.getElementById('Phone Number').value.trim()
   
       try {
         await db.collection('profiles').add({
@@ -77,4 +79,3 @@
 
 </body>
 </html>
-
