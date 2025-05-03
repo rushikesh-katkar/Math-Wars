@@ -1,3 +1,54 @@
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<!-- Your Firebase Config -->
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtWEdVeGr7zfl9fMv1gOTkeYE1mPjNIR0",
+      authDomain: "math-works-f7769.firebaseapp.com",
+      projectId: "math-works-f7769",
+      storageBucket: "math-works-f7769.firebasestorage.app",
+      messagingSenderId: "52934188924",
+      appId: "1:52934188924:web:d0e4df1b15c6927b930ef9"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+  </script>
+
+<script>
+    document.getElementById('profile-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+  
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const school = document.getElementById('school').value.trim();
+  
+      try {
+        await db.collection('profiles').add({
+          name: name,
+          email: email,
+          school: school,
+          timestamp: new Date()
+        });
+        document.getElementById('save-message').textContent = '✅ Profile saved to Firebase!';
+        document.getElementById('save-message').style.color = 'green';
+      } catch (error) {
+        console.error('Error writing document: ', error);
+        document.getElementById('save-message').textContent = '❌ Failed to save profile.';
+        document.getElementById('save-message').style.color = 'red';
+      }
+    });
+  </script>
+
+
 <!-- create-profile.html -->
 <!DOCTYPE html>
 <html lang="en">
@@ -26,3 +77,4 @@
 
 </body>
 </html>
+
