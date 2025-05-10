@@ -27,53 +27,58 @@
   </section>
 
   <!-- Firebase Modular SDK (v11) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+  <!-- Replace the existing <script type="module"> with this one -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBtWEdVeGr7zfl9fMv1gOTkeYE1mPjNIR0",
-      authDomain: "math-works-f7769.firebaseapp.com",
-      projectId: "math-works-f7769",
-      storageBucket: "math-works-f7769.appspot.com",
-      messagingSenderId: "52934188924",
-      appId: "1:52934188924:web:d0e4df1b15c6927b930ef9"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyBtWEdVeGr7zfl9fMv1gOTkeYE1mPjNIR0",
+    authDomain: "math-works-f7769.firebaseapp.com",
+    projectId: "math-works-f7769",
+    storageBucket: "math-works-f7769.appspot.com",
+    messagingSenderId: "52934188924",
+    appId: "1:52934188924:web:d0e4df1b15c6927b930ef9"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
 
-    document.getElementById('profile-form').addEventListener('submit', async function (e) {
-      e.preventDefault();
+  document.getElementById('profile-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-      const fname = document.getElementById('first-name').value.trim();
-      const lname = document.getElementById('last-name').value.trim();
-      const dob = document.getElementById('dob').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const password = document.getElementById('password').value.trim();
-      try {
-        await addDoc(collection(db, 'profiles'), {
-          firstName: fname,
-          lastName: lname,
-          dateOfBirth: dob,
-          email: email,
-          phoneNumber: phone,
-          password: password,
-          timestamp: new Date()
-        });
+    const fname = document.getElementById('first-name').value.trim();
+    const lname = document.getElementById('last-name').value.trim();
+    const dob = document.getElementById('dob').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const msg = document.getElementById('save-message');
 
-        const msg = document.getElementById('save-message');
-        msg.textContent = '✅ Profile saved to Firebase!';
-        msg.style.color = 'green';
-      } catch (error) {
-        console.error('Error writing document:', error);
-        const msg = document.getElementById('save-message');
-        msg.textContent = '❌ Failed to save profile.';
-        msg.style.color = 'red';
-      }
-    });
-  </script>
+    try {
+      // ✅ Create user with Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-</body>
-</html>
+      // ✅ Store profile info in Firestore
+      await addDoc(collection(db, 'profiles'), {
+        uid: user.uid,
+        firstName: fname,
+        lastName: lname,
+        dateOfBirth: dob,
+        email: email,
+        phoneNumber: phone,
+        timestamp: new Date()
+      });
+
+      msg.textContent = '✅ Profile and account created!';
+      msg.style.color = 'green';
+    } catch (error) {
+      console.error('Error creating account or saving profile:', error);
+      msg.textContent = '❌ ' + (error.message || 'Failed to create profile.');
+      msg.style.color = 'red';
+    }
+  });
+</script>
