@@ -1,0 +1,74 @@
+<!-- profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Profile</title>
+</head>
+<body>
+
+  <h1>User Profile</h1>
+
+  <!-- Step 6: HTML elements -->
+  <p><strong>Name:</strong> <span id="user-name"></span></p>
+  <p><strong>Email:</strong> <span id="user-email"></span></p>
+  <h2>Scores</h2>
+  <ul>
+    <li>Easy: <span id="score-easy">0</span></li>
+    <li>Medium: <span id="score-medium">0</span></li>
+    <li>Hard: <span id="score-hard">0</span></li>
+  </ul>
+  <p><strong>Total Solved:</strong> <span id="total-solved">0</span></p>
+
+  <!-- Firebase SDK logic (Steps 2–5) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userEmail = user.email;
+
+        const querySnapshot = await getDocs(collection(db, "profiles"));
+        let userDoc = null;
+
+        querySnapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          if (data.email === userEmail) {
+            userDoc = data;
+          }
+        });
+
+        if (userDoc) {
+          document.getElementById("user-name").textContent = userDoc.firstName;
+          document.getElementById("user-email").textContent = userDoc.email;
+          document.getElementById("score-easy").textContent = userDoc.score?.easy || 0;
+          document.getElementById("score-medium").textContent = userDoc.score?.medium || 0;
+          document.getElementById("score-hard").textContent = userDoc.score?.hard || 0;
+          document.getElementById("total-solved").textContent = userDoc.totalSolved || 0;
+        } else {
+          document.body.innerHTML = "<h2>Profile not found</h2>";
+        }
+
+      } else {
+        window.location.href = "login.html";  // redirect if not logged in
+      }
+    });
+  </script>
+
+</body>
+</html>
