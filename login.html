@@ -1,0 +1,76 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login – Math Wars</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Login to Math Wars</h1>
+  </header>
+
+  <main>
+    <form id="login-form">
+      <label for="email">Email:</label><br>
+      <input type="email" id="email" required><br><br>
+
+      <label for="password">Password:</label><br>
+      <input type="password" id="password" required><br><br>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <p id="login-message"></p>
+  </main>
+
+  <script type="module">
+    // ✅ Firebase imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+    // ✅ Firebase config (replace if different)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtWEdVeGr7zfl9fMv1gOTkeYE1mPjNIR0",
+      authDomain: "math-works-f7769.firebaseapp.com",
+      projectId: "math-works-f7769",
+      storageBucket: "math-works-f7769.appspot.com",
+      messagingSenderId: "52934188924",
+      appId: "1:52934188924:web:d0e4df1b15c6927b930ef9"
+    };
+
+    // ✅ Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // ✅ Handle login
+    const form = document.getElementById('login-form');
+    const message = document.getElementById('login-message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        message.textContent = "✅ Login successful! Redirecting...";
+        message.style.color = "green";
+
+        // ✅ Redirect to profile page
+        setTimeout(() => {
+          window.location.href = "profile.html";
+        }, 1000);
+      } catch (error) {
+        console.error("Login error:", error);
+        message.textContent = "❌ Login failed. Please check your credentials.";
+        message.style.color = "red";
+      }
+    });
+  </script>
+
+</body>
+</html>
