@@ -51,7 +51,7 @@
       const dob = document.getElementById('dob').value.trim();
       const email = document.getElementById('email').value.trim();
       const phone = document.getElementById('phone').value.trim();
-
+      const password = document.getElementById('password').value.trim();
       try {
         await addDoc(collection(db, 'profiles'), {
           firstName: fname,
@@ -59,6 +59,7 @@
           dateOfBirth: dob,
           email: email,
           phoneNumber: phone,
+          password: password,
           timestamp: new Date()
         });
 
