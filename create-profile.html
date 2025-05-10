@@ -1,79 +1,77 @@
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-
-<!-- Your Firebase Config -->
-<script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
-  
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyBtWEdVeGr7zfl9fMv1gOTkeYE1mPjNIR0",
-      authDomain: "math-works-f7769.firebaseapp.com",
-      projectId: "math-works-f7769",
-      storageBucket: "math-works-f7769.firebasestorage.app",
-      messagingSenderId: "52934188924",
-      appId: "1:52934188924:web:d0e4df1b15c6927b930ef9"
-    };
-  
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-  </script>
-
-<script>
-    document.getElementById('profile-form').addEventListener('submit', async function (e) {
-      e.preventDefault();
-  
-      const fname = document.getElementById('First Name').value.trim();
-      const lname = document.getElementById('Last Name').value.trim();
-      const dob = document.getElementById('Date of Birth').value.trim();
-      const email = document.getElementById('Email id').value.trim();
-      const mbn = document.getElementById('Phone Number').value.trim()
-  
-      try {
-        await db.collection('profiles').add({
-          name: name,
-          email: email,
-          school: school,
-          timestamp: new Date()
-        });
-        document.getElementById('save-message').textContent = '✅ Profile saved to Firebase!';
-        document.getElementById('save-message').style.color = 'green';
-      } catch (error) {
-        console.error('Error writing document: ', error);
-        document.getElementById('save-message').textContent = '❌ Failed to save profile.';
-        document.getElementById('save-message').style.color = 'red';
-      }
-    });
-  </script>
-<!-- create-profile.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Create Profile</title>
-  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <header>
     <h1>Create Your Profile</h1>
     <nav>
       <a href="index.html">Home</a>
     </nav>
   </header>
+
   <section>
-    <form>
-      <input type="text" placeholder="Full Name" required><br>
-      <input type="text" placeholder="Last Name"><br>
-      <input type="text" placeholder="Email Address" required><br>
-      <input type="text" placeholder="Phone Number" required><br>
-      <input type="text" placeholder="Date of Birth" required><br>
+    <form id="profile-form">
+      <input id="first-name" type="text" placeholder="First Name" required><br>
+      <input id="last-name" type="text" placeholder="Last Name"><br>
+      <input id="email" type="email" placeholder="Email Address" required><br>
+      <input id="phone" type="text" placeholder="Phone Number" required><br>
+      <input id="dob" type="text" placeholder="Date of Birth (dd-mm-yyyy)" required><br>
       <button type="submit">Save Profile</button>
     </form>
+    <p id="save-message"></p>
   </section>
+
+  <!-- Firebase Modular SDK (v11) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtWEdVeGr7zfl9fMv1gOTkeYE1mPjNIR0",
+      authDomain: "math-works-f7769.firebaseapp.com",
+      projectId: "math-works-f7769",
+      storageBucket: "math-works-f7769.appspot.com",
+      messagingSenderId: "52934188924",
+      appId: "1:52934188924:web:d0e4df1b15c6927b930ef9"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    document.getElementById('profile-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const fname = document.getElementById('first-name').value.trim();
+      const lname = document.getElementById('last-name').value.trim();
+      const dob = document.getElementById('dob').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+
+      try {
+        await addDoc(collection(db, 'profiles'), {
+          firstName: fname,
+          lastName: lname,
+          dateOfBirth: dob,
+          email: email,
+          phoneNumber: phone,
+          timestamp: new Date()
+        });
+
+        const msg = document.getElementById('save-message');
+        msg.textContent = '✅ Profile saved to Firebase!';
+        msg.style.color = 'green';
+      } catch (error) {
+        console.error('Error writing document:', error);
+        const msg = document.getElementById('save-message');
+        msg.textContent = '❌ Failed to save profile.';
+        msg.style.color = 'red';
+      }
+    });
+  </script>
 
 </body>
 </html>
